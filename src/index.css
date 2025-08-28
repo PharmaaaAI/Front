@@ -1,0 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-fredoka: "Fredoka", sans-serif;
+  --color-primary: #0092DB;
+  --color-secondary: #F9FAFB;
+  --color-dark-purple: #101828;
+}

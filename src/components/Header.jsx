@@ -1,0 +1,145 @@
+import React, { useState } from 'react'
+import {
+  FiShoppingCart,
+  FiUser,
+  FiChevronDown,
+  FiMenu,
+  FiX
+} from 'react-icons/fi'
+import { Link } from 'react-router'
+
+const Header = ({ cartCount = 0 }) => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isMobileProductsOpen, setIsMobileProductsOpen] = useState(false)
+  const [isMobileUserOpen, setIsMobileUserOpen] = useState(false)
+
+  const NavLink = ({ children, to = '#' }) => (
+    <Link to={to} className="block py-2 text-gray-600 hover:text-gray-900 transition-colors duration-300">
+      {children}
+    </Link>
+  )
+
+  const DropdownItem = ({ children, to = '#' }) => (
+    <Link to={to} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 rounded-md">
+      {children}
+    </Link>
+  )
+
+  const CartIconWithCounter = ({ count }) => {
+    const showCounter = typeof count === 'number'
+    const counterBgClass = count > 0 ? 'bg-red-500' : 'bg-gray-500'
+
+    return (
+      <div className="relative text-gray-600 hover:text-gray-900 transition-colors duration-300">
+        <FiShoppingCart size={22} />
+        {showCounter && (
+          <span className={`absolute -top-2 -right-3 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center p-1 ${counterBgClass}`}>
+            {count > 10 ? '10+' : count}
+          </span>
+        )}
+      </div>
+    )
+  }
+  return (
+    <header className="bg-white shadow-sm sticky top-0 z-50">
+      <nav className="container mx-auto px-6 py-4 flex justify-between items-center">
+        <div className="text-2xl font-bold text-gray-800">
+          <Link to="/">PharmaAI</Link>
+        </div>
+
+        <div className="hidden md:flex items-center space-x-8">
+          <Link to="#" className="text-gray-600 hover:text-gray-900">How It Works</Link>
+
+          <div className="relative group">
+            <button className="flex items-center text-gray-600 hover:text-gray-900 transition-colors duration-300 cursor-pointer">
+              <span>Products</span>
+              <FiChevronDown className="ml-1 w-4 h-4 transition-transform duration-300 group-hover:rotate-180" />
+            </button>
+            
+            <div className="absolute mt-2 w-48 bg-white rounded-md shadow-lg py-1 border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+              <DropdownItem>Skincare</DropdownItem>
+              <DropdownItem>Supplements</DropdownItem>
+              <DropdownItem>Hair Care</DropdownItem>
+              <DropdownItem>Body Care</DropdownItem>
+            </div>
+          </div>
+
+          <Link to="#" className="flex items-center">
+            <CartIconWithCounter count={cartCount} />
+          </Link>
+
+          <div className="relative group">
+            <button className="flex items-center text-gray-600 hover:text-gray-900 transition-colors duration-300 cursor-pointer">
+              <FiUser size={22} />
+              <FiChevronDown className="ml-1 w-4 h-4 transition-transform duration-300 group-hover:rotate-180" />
+            </button>
+            
+            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+              <DropdownItem>My Profile</DropdownItem>
+              <DropdownItem>Order History</DropdownItem>
+              <DropdownItem>Logout</DropdownItem>
+            </div>
+          </div>
+        </div>
+
+        <div className="md:hidden">
+          <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-gray-600 focus:outline-none">
+            {isMobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+          </button>
+        </div>
+      </nav>
+
+      {/* Mobile Menu */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden bg-white px-6 pb-4 border-t border-gray-200">
+          <div className="flex flex-col pt-4">
+            <NavLink>How It Works</NavLink>
+            
+            <div>
+              <button
+                onClick={() => setIsMobileProductsOpen(!isMobileProductsOpen)}
+                className="w-full flex justify-between items-center py-2 text-gray-600 hover:text-gray-900 transition-colors duration-300"
+              >
+                <span>Products</span>
+                <FiChevronDown className={`w-5 h-5 transition-transform duration-300 ${isMobileProductsOpen ? 'rotate-180' : ''}`} />
+              </button>
+              {isMobileProductsOpen && (
+                <div className="pl-4 pb-2 flex flex-col space-y-2">
+                  <Link to="#" className="text-gray-500 hover:text-gray-800">Skincare</Link>
+                  <Link to="#" className="text-gray-500 hover:text-gray-800">Supplements</Link>
+                  <Link to="#" className="text-gray-500 hover:text-gray-800">Hair Care</Link>
+                  <Link to="#" className="text-gray-500 hover:text-gray-800">Body Care</Link>
+                </div>
+              )}
+            </div>
+            
+            <div>
+              <button
+                onClick={() => setIsMobileUserOpen(!isMobileUserOpen)}
+                className="w-full flex justify-between items-center py-2 text-gray-600 hover:text-gray-900 transition-colors duration-300"
+              >
+                <span>My Account</span>
+                <FiChevronDown className={`w-5 h-5 transition-transform duration-300 ${isMobileUserOpen ? 'rotate-180' : ''}`} />
+              </button>
+              {isMobileUserOpen && (
+                <div className="pl-4 pb-2 flex flex-col space-y-2">
+                  <Link to="#" className="text-gray-500 hover:text-gray-800">My Profile</Link>
+                  <Link to="#" className="text-gray-500 hover:text-gray-800">Order History</Link>
+                  <Link to="#" className="text-gray-500 hover:text-gray-800">Settings</Link>
+                  <Link to="#" className="text-gray-500 hover:text-gray-800">Logout</Link>
+                </div>
+              )}
+            </div>
+
+            <Link to="#" className="flex justify-between items-center py-2 text-gray-600 hover:text-gray-900">
+              <span>My Cart</span>
+              <CartIconWithCounter count={cartCount} />
+            </Link>
+          </div>
+        </div>
+      )}
+    </header>
+  )
+}
+
+export default Header
