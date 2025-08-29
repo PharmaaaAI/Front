@@ -6,7 +6,7 @@ const sectionImage = 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b
 
 const AboutUs = () => {
   return (
-    <div className="bg-white text-gray-700">
+    <div className="text-gray-700">
 
       <div className="relative h-[50vh] min-h-[400px]">
         <img

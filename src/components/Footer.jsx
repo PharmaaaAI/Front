@@ -51,10 +51,9 @@ const Footer = () => {
 
           <div className="flex flex-col space-y-4">
             <h3 className="text-lg font-semibold text-white">Support</h3>
-            <FooterLink>FAQ</FooterLink>
+            <FooterLink to="/faq">FAQ</FooterLink>
             <FooterLink to='/contact-us'>Contact Us</FooterLink>
-            <FooterLink>Shipping</FooterLink>
-            <FooterLink>Returns</FooterLink>
+            <FooterLink to='/shipping-and-returns'>Shipping & Returns</FooterLink>
           </div>
 
           <div className="flex flex-col space-y-4">
@@ -78,9 +77,8 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row justify-between items-center text-sm">
           <p className="text-gray-400 mb-4 md:mb-0">© 2025 PharmaAI. All rights reserved.</p>
           <div className="flex space-x-6">
-            <FooterLink>Privacy Policy</FooterLink>
-            <FooterLink>Terms of Service</FooterLink>
-            <FooterLink>Cookie Policy</FooterLink>
+            <FooterLink to='/privacy-policy'>Privacy Policy</FooterLink>
+            <FooterLink to='/terms-of-service'>Terms of Service</FooterLink>
           </div>
         </div>
       </div>
