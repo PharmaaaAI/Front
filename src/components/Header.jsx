@@ -41,7 +41,7 @@ const Header = ({ cartCount = 0 }) => {
     )
   }
   return (
-    <header className="shadow-sm sticky top-0 z-50">
+    <header className="bg-white shadow-sm sticky top-0 z-50">
       <nav className="container mx-auto px-6 py-4 flex justify-between items-center">
         <div className="text-2xl font-bold text-gray-800">
           <Link to="/">PharmaAI</Link>
@@ -56,7 +56,7 @@ const Header = ({ cartCount = 0 }) => {
               <FiChevronDown className="ml-1 w-4 h-4 transition-transform duration-300 group-hover:rotate-180" />
             </button>
             
-            <div className="absolute mt-2 w-48 rounded-md shadow-lg py-1 border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+            <div className="absolute mt-2 w-48 bg-white rounded-md shadow-lg py-1 border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
               <DropdownItem>Skincare</DropdownItem>
               <DropdownItem>Supplements</DropdownItem>
               <DropdownItem>Hair Care</DropdownItem>
@@ -74,7 +74,7 @@ const Header = ({ cartCount = 0 }) => {
               <FiChevronDown className="ml-1 w-4 h-4 transition-transform duration-300 group-hover:rotate-180" />
             </button>
             
-            <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
               <DropdownItem>My Profile</DropdownItem>
               <DropdownItem>Order History</DropdownItem>
               <DropdownItem>Logout</DropdownItem>
@@ -91,7 +91,7 @@ const Header = ({ cartCount = 0 }) => {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden px-6 pb-4 border-t border-gray-200">
+        <div className="md:hidden bg-white px-6 pb-4 border-t border-gray-200">
           <div className="flex flex-col pt-4">
             <NavLink>How It Works</NavLink>
             
