@@ -1,29 +1,34 @@
-import React from 'react'
-import { FaInstagram, FaTiktok, FaYoutube, FaFacebookF } from 'react-icons/fa'
-import { Link } from 'react-router'
+import { FaInstagram, FaTiktok, FaYoutube, FaFacebookF } from "react-icons/fa";
+import { Link } from "react-router";
 
 const Footer = () => {
-  const FooterLink = ({ to = '#', children }) => (
-    <Link to={to} className="text-gray-400 hover:text-white transition-colors duration-300">
+  const FooterLink = ({ to = "#", children }) => (
+    <Link
+      to={to}
+      className="text-gray-400 hover:text-white transition-colors duration-300"
+    >
       {children}
     </Link>
-  )
+  );
 
-  const SocialIcon = ({ to = '#', icon: Icon }) => (
-    <Link to={to} className="text-gray-400 hover:text-white transition-colors duration-300">
+  const SocialIcon = ({ to = "#", icon: Icon }) => (
+    <Link
+      to={to}
+      className="text-gray-400 hover:text-white transition-colors duration-300"
+    >
       <Icon size={24} />
     </Link>
-  )
+  );
 
   return (
     <footer className="bg-dark-purple text-gray-300 ">
       <div className="container mx-auto px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 text-center sm:text-start mx-auto">
-
           <div className="flex flex-col space-y-4">
             <h2 className="text-2xl font-bold text-white">PharmaAI</h2>
             <p className="text-gray-400 ">
-              Personalized medicine powered by artificial intelligence. Discover your optimal treatment plan today.
+              Personalized medicine powered by artificial intelligence. Discover
+              your optimal treatment plan today.
             </p>
             <div className="flex space-x-4 pt-2 mx-auto sm:mx-0">
               <SocialIcon icon={FaInstagram} />
@@ -52,13 +57,17 @@ const Footer = () => {
           <div className="flex flex-col space-y-4">
             <h3 className="text-lg font-semibold text-white">Support</h3>
             <FooterLink to="/faq">FAQ</FooterLink>
-            <FooterLink to='/contact-us'>Contact Us</FooterLink>
-            <FooterLink to='/shipping-and-returns'>Shipping & Returns</FooterLink>
+            <FooterLink to="/contact-us">Contact Us</FooterLink>
+            <FooterLink to="/shipping-and-returns">
+              Shipping & Returns
+            </FooterLink>
           </div>
 
           <div className="flex flex-col space-y-4">
             <h3 className="text-lg font-semibold text-white">Newsletter</h3>
-            <p className="text-gray-400">Get medical tips and exclusive offers</p>
+            <p className="text-gray-400">
+              Get medical tips and exclusive offers
+            </p>
             <div className="flex mt-2">
               <input
                 type="email"
@@ -75,16 +84,17 @@ const Footer = () => {
         <hr className="border-t border-gray-700 my-8" />
 
         <div className="flex flex-col md:flex-row justify-between items-center text-sm">
-          <p className="text-gray-400 mb-4 md:mb-0">© 2025 PharmaAI. All rights reserved.</p>
+          <p className="text-gray-400 mb-4 md:mb-0">
+            © 2025 PharmaAI. All rights reserved.
+          </p>
           <div className="flex space-x-6">
-            <FooterLink to='/privacy-policy'>Privacy Policy</FooterLink>
-            <FooterLink to='/terms-of-service'>Terms of Service</FooterLink>
+            <FooterLink to="/privacy-policy">Privacy Policy</FooterLink>
+            <FooterLink to="/terms-of-service">Terms of Service</FooterLink>
           </div>
         </div>
       </div>
-
     </footer>
-  )
-}
+  );
+};
 
-export default Footer
+export default Footer;
