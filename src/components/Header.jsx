@@ -10,8 +10,11 @@ import { Link } from "react-router";
 
 const Header = ({ cartCount = 0 }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isMobileProductsOpen, setIsMobileProductsOpen] = useState(false);
-  const [isMobileUserOpen, setIsMobileUserOpen] = useState(false);
+  const [openMobileMenu, setOpenMobileMenu] = useState(null);
+
+  const handleMobileMenuToggle = (menu) => {
+    setOpenMobileMenu(openMobileMenu === menu ? null : menu);
+  };
 
   const NavLink = ({ children, to = "#" }) => (
     <Link
@@ -62,15 +65,17 @@ const Header = ({ cartCount = 0 }) => {
 
           <div className="relative group">
             <button className="flex items-center text-gray-600 hover:text-gray-900 transition-colors duration-300 cursor-pointer">
-              <span>Products</span>
+              <Link to="/products">
+                <span>Products</span>
+              </Link>
               <FiChevronDown className="ml-1 w-4 h-4 transition-transform duration-300 group-hover:rotate-180" />
             </button>
 
             <div className="absolute mt-2 w-48 bg-white rounded-md shadow-lg py-1 border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-              <DropdownItem>Skincare</DropdownItem>
-              <DropdownItem>Supplements</DropdownItem>
-              <DropdownItem>Hair Care</DropdownItem>
-              <DropdownItem>Body Care</DropdownItem>
+              <DropdownItem to="/products/Skincare">Skincare</DropdownItem>
+              <DropdownItem to="/products/Hair Care">Hair Care</DropdownItem>
+              <DropdownItem to="/products/Body Care">Body Care</DropdownItem>
+              <DropdownItem to="/products/Hand Care">Hand Care</DropdownItem>
             </div>
           </div>
 
@@ -110,29 +115,43 @@ const Header = ({ cartCount = 0 }) => {
 
             <div>
               <button
-                onClick={() => setIsMobileProductsOpen(!isMobileProductsOpen)}
+                onClick={() => handleMobileMenuToggle("products")}
                 className="w-full flex justify-between items-center py-2 text-gray-600 hover:text-gray-900 transition-colors duration-300"
               >
-                <span>Products</span>
+                <Link to="/products">
+                  <span>Products</span>
+                </Link>
                 <FiChevronDown
                   className={`w-5 h-5 transition-transform duration-300 ${
-                    isMobileProductsOpen ? "rotate-180" : ""
+                    openMobileMenu === "products" ? "rotate-180" : ""
                   }`}
                 />
               </button>
-              {isMobileProductsOpen && (
+              {openMobileMenu === "products" && (
                 <div className="pl-4 pb-2 flex flex-col space-y-2">
-                  <Link to="#" className="text-gray-500 hover:text-gray-800">
+                  <Link
+                    to="/products/Skincare"
+                    className="text-gray-500 hover:text-gray-800"
+                  >
                     Skincare
                   </Link>
-                  <Link to="#" className="text-gray-500 hover:text-gray-800">
-                    Supplements
-                  </Link>
-                  <Link to="#" className="text-gray-500 hover:text-gray-800">
+                  <Link
+                    to="/products/Hair Care"
+                    className="text-gray-500 hover:text-gray-800"
+                  >
                     Hair Care
                   </Link>
-                  <Link to="#" className="text-gray-500 hover:text-gray-800">
+                  <Link
+                    to="/products/Body Care"
+                    className="text-gray-500 hover:text-gray-800"
+                  >
                     Body Care
+                  </Link>
+                  <Link
+                    to="/products/Hand Care"
+                    className="text-gray-500 hover:text-gray-800"
+                  >
+                    Hand Care
                   </Link>
                 </div>
               )}
@@ -140,17 +159,17 @@ const Header = ({ cartCount = 0 }) => {
 
             <div>
               <button
-                onClick={() => setIsMobileUserOpen(!isMobileUserOpen)}
+                onClick={() => handleMobileMenuToggle("user")}
                 className="w-full flex justify-between items-center py-2 text-gray-600 hover:text-gray-900 transition-colors duration-300"
               >
                 <span>My Account</span>
                 <FiChevronDown
                   className={`w-5 h-5 transition-transform duration-300 ${
-                    isMobileUserOpen ? "rotate-180" : ""
+                    openMobileMenu === "user" ? "rotate-180" : ""
                   }`}
                 />
               </button>
-              {isMobileUserOpen && (
+              {openMobileMenu === "user" && (
                 <div className="pl-4 pb-2 flex flex-col space-y-2">
                   <Link to="#" className="text-gray-500 hover:text-gray-800">
                     My Profile

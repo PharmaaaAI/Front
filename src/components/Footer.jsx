@@ -48,10 +48,10 @@ const Footer = () => {
 
           <div className="flex flex-col space-y-4">
             <h3 className="text-lg font-semibold text-white">Shop Now</h3>
-            <FooterLink>Body Building</FooterLink>
-            <FooterLink>Medicine</FooterLink>
-            <FooterLink>Nutrition</FooterLink>
-            <FooterLink>Personal Care</FooterLink>
+            <FooterLink to="/products">All Products</FooterLink>
+            <FooterLink to="/products/Skincare">Skincare</FooterLink>
+            <FooterLink to="/products/Hair Care">Hair Care</FooterLink>
+            <FooterLink to="/products/Body Care">Body Care</FooterLink>
           </div>
 
           <div className="flex flex-col space-y-4">
