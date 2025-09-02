@@ -32,7 +32,8 @@ const Products = () => {
             {pageTitle}
           </h1>
           <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-600">
-            Discover our medicine and healthcare products tailored to your needs.
+            Discover our medicine and healthcare products tailored to your
+            needs.
           </p>
         </header>
 

@@ -21,7 +21,8 @@ const ProductImageGallery = ({ images, productName }) => {
           pagination={{ clickable: true }}
           spaceBetween={10}
           thumbs={{
-            swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null,
+            swiper:
+              thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null,
           }}
         >
           {images.map((img, index) => (
