@@ -1,13 +1,167 @@
 @import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap");
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+@import "../node_modules/flowbite";
+@plugin "flowbite/plugin";
 
 @theme {
   --font-fredoka: "Fredoka", sans-serif;
   --color-primary: #0092DB;
   --color-secondary: #F9FAFB;
   --color-dark-purple: #101828;
+  --color-primary-50: #f0f9ff;
+  --color-primary-100: #e0f2fe;
+  --color-primary-200: #bae6fd;
+  --color-primary-300: #7dd3fc;
+  --color-primary-400: #38bdf8;
+  --color-primary-500: #0ea5e9;
+  --color-primary-600: #0284c7;
+  --color-primary-700: #0369a1;
+  --color-primary-800: #075985;
+  --color-primary-900: #0c4a6e;
+
+  --color-secondary-50: #fdf4ff;
+  --color-secondary-100: #fae8ff;
+  --color-secondary-200: #f5d0fe;
+  --color-secondary-300: #f0abfc;
+  --color-secondary-400: #e879f9;
+  --color-secondary-500: #d946ef;
+  --color-secondary-600: #c026d3;
+  --color-secondary-700: #a21caf;
+  --color-secondary-800: #86198f;
+  --color-secondary-900: #701a75;
 }
 
 .swiper-slide-thumb-active {
   opacity: 1
 }
+
+
+
+
+:root{
+    --sage: hsl(142 69% 58%);
+  --soft-blue: hsl(213 71% 78%);
+  --coral: hsl(0 69% 78%);
+  --warm-gray: hsl(215 16% 47%);
+  --bg-warm: hsl(0 0% 99.6%);
+}
+
+
+
+@layer utilities {
+  .bg-sage {
+    background-color: var(--sage);
+  }
+  
+  .bg-soft-blue {
+    background-color: var(--soft-blue);
+  }
+  
+  .bg-coral {
+    background-color: var(--coral);
+  }
+
+    .text-sage {
+    color: var(--sage);
+  }
+  
+  .text-soft-blue {
+    color: var(--soft-blue);
+  }
+  
+  .text-coral {
+    color: var(--coral);
+  }
+}
+
+
+/* Define your custom keyframes and animation */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Define your custom animation utility */
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+
+:root{
+   --font-sans: 'Inter', 'Open Sans', sans-serif;
+  --font-serif: Georgia, serif;
+  --font-mono: Menlo, monospace;
+   --sage: #4ade80;
+}
+
+body {
+  font-family: var(--font-sans);
+  }
+  
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-sans);
+  }
+
+.text-sage {
+    color: var(--sage);
+  }
+
+
+  /* for price section 1 */
+.pricing-card:hover .pricing-check {
+      color: currentColor;
+    }
+    
+.pricing-card:hover .pricing-duration {
+      color: currentColor;
+    }
+    
+.pricing-popular {
+      position: relative;
+      overflow: hidden;
+    }
+    
+.pricing-popular::before {
+      content: 'POPULAR';
+      position: absolute;
+      top: 26px;
+      right: -26px;
+      transform: rotate(45deg);
+      background-color: #0ea5e9;
+      color: white;
+      padding: 2px 28px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      z-index: 1;
+      min-height: 200px;
+    }
+.bg-gradient-to-br{
+  background-image: linear-gradient(to bottom right, var(--color-primary-600), var(--color-primary-700)) !important ;
+}
+
+/* end of price section 1 */
+
+.features-video-container{
+  width: 100%;
+  max-width: 40rem;
+}
+
+.features-video-container .FeatureVideo{
+    border-radius: 9px;
+    width: 100%;
+    position: relative;
+    transform: perspective(3000px) rotateY(5deg);
+    transition: transform 1s ease 0s;     
+}
+.FeatureVideo:hover{
+    transform: perspective(1500px) rotateY(-15deg);
+}
+
+

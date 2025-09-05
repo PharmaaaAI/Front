@@ -12,6 +12,7 @@ import TermsOfService from "./pages/Support/TermsOfService";
 import FAQ from "./pages/Support/FAQ";
 import ProductDetails from "./pages/Products/ProductDetails";
 import Products from "./pages/Products/Products";
+import HeroSection from "./components/HeroSection"
 
 export const App = () => {
   return (
@@ -22,7 +23,7 @@ export const App = () => {
 
         <main className="flex-1">
           <Routes>
-            <Route index element={<Home />} />
+            <Route index element={<HeroSection/>} />
             <Route path="/about-us" element={<AboutUs />} />
             <Route path="/contact-us" element={<ContactUs />} />
             <Route path="/faq" element={<FAQ />} />
