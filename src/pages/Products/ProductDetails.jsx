@@ -15,6 +15,11 @@ import { getProduct } from "../../api/Products";
 import ProductImageGallery from "../../components/ProductImageGallery";
 import RelatedProducts from "../../components/RelatedProducts";
 
+import { useDispatch, useSelector } from "react-redux";
+import updateProductFetch from "../../utils/updateProductFetch"
+import { addToCart, removeFromCart, increaseItemInCart, decreaseItemInCart } from "../../rtk/slices/items-slice";
+import { Trash2, Minus, Plus } from "lucide-react";
+
 const ProductDetails = () => {
   let params = useParams();
   const { id } = params;
@@ -39,6 +44,12 @@ const ProductDetails = () => {
 
   const isOutOfStock = product?.quantity === 0;
 
+  const items = useSelector(state => state.items)
+  const dispatch = useDispatch();
+  const item = items.find(product => product.productID === id);
+
+  console.log("quantity => ", quantity)
+
   if (isLoading) {
     return (
       <div className="container mx-auto px-6 py-12">
@@ -53,10 +64,23 @@ const ProductDetails = () => {
     );
   }
 
+  const inc = (id) => {
+    dispatch(increaseItemInCart(id))
+    updateProductFetch("increaseProduct", id)
+  }
+  const dec = (id) => {
+    dispatch(decreaseItemInCart(id));
+    updateProductFetch("decreaseProduct", id)
+  }
+  const remove = (id) => {
+    dispatch(removeFromCart(id));
+    updateProductFetch("removeProduct", id)
+  } 
+
   return (
     <div className="bg-white">
       <div className="container mx-auto px-6 py-12">
-        <div className="flex items-center text-sm text-gray-500 mb-8">
+        <div className="flex products-center text-sm text-gray-500 mb-8">
           <Link to="/" className="hover:text-gray-800">
             Home
           </Link>
@@ -87,7 +111,7 @@ const ProductDetails = () => {
             <h1 className="text-3xl md:text-4xl font-semibold text-gray-900 mt-2">
               {product.name}
             </h1>
-            <div className="flex items-baseline space-x-3 mt-4">
+            <div className="flex products-baseline space-x-3 mt-4">
               <p className="text-3xl font-semibold text-gray-900">
                 ${product.price.toFixed(2)}
               </p>
@@ -103,37 +127,70 @@ const ProductDetails = () => {
               {product.description}
             </p>
 
-            <div className="flex items-center mt-6">
-              <div className="flex border rounded-lg">
-                <button
-                  onClick={() => handleQuantityChange(-1)}
-                  disabled={isOutOfStock}
-                  className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <FiMinus />
-                </button>
-                <span className="px-5 py-2">{isOutOfStock ? 0 : quantity}</span>
-                <button
-                  onClick={() => handleQuantityChange(1)}
-                  disabled={isOutOfStock}
-                  className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <FiPlus />
-                </button>
-              </div>
+            {item ? 
+              // <div className="flex items-center justify-between border rounded-full overflow-hidden shadow-inner">
+              <div className="flex items-center justify-between border rounded-full w-3xs overflow-hidden shadow-inner">
               <button
-                disabled={isOutOfStock}
-                className="flex-1 ml-4 bg-blue-500 text-white font-semibold py-3 px-8 rounded-lg cursor-pointer hover:bg-blue-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+                aria-label={`Decrease quantity of ${product.name}`}
+                onClick={() => {
+                  item.quantity > 1? dec(product._id): remove(product._id)
+                }}
+                className={`px-4 py-2 cursor-pointer
+                  
+                ${item.quantity > 1? "bg-gray-100 hover:bg-gray-200"
+                  : "bg-red-500 hover:bg-red-600"}
+                  `}
               >
-                {isOutOfStock ? "Out of Stock" : "Add to Cart"}
+                {item.quantity > 1 ? <Minus className="w-3.5" size={20}/> : <Trash2 className="w-3.5" size={20}/>}
+              </button>
+              <span className="px-3 text-sm tabular-nums">{item.quantity}</span>
+              <button
+                aria-label={`Increase quantity of ${product.name}`}
+                onClick={() => {inc(product._id)}}
+                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 cursor-pointer"
+
+              >
+                <Plus className="w-3.5" size={20}/>
               </button>
             </div>
+              :
+              <div className="flex products-center mt-6">
+                <div className="flex border rounded-lg">
+                  <button
+                    onClick={() => handleQuantityChange(-1)}
+                    disabled={isOutOfStock}
+                    className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <FiMinus />
+                  </button>
+                  <span className="px-5 py-2">{isOutOfStock ? 0 : quantity}</span>
+                  <button
+                    onClick={() => handleQuantityChange(1)}
+                    disabled={isOutOfStock}
+                    className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <FiPlus />
+                  </button>
+                </div>
+                <button
+                  onClick={() => {
+                    dispatch(addToCart({id: product._id, quantity}))
+                    updateProductFetch("addProduct", product._id)
+                  }}
+                  disabled={isOutOfStock}
+                  className="flex-1 ml-4 bg-blue-500 text-white font-semibold py-3 px-8 rounded-lg cursor-pointer hover:bg-blue-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+                >
+                  {isOutOfStock ? "Out of Stock" : item? "Product Already In Cart": "Add to cart"}
+                </button>
+              </div>
+            }
+
             <div className="border-t mt-6 pt-6 space-y-3 text-sm text-gray-600">
-              <p className="flex items-center">
+              <p className="flex products-center">
                 <FiTruck className="mr-3 text-gray-500" /> Free Shipping &
-                Returns on this item
+                Returns on this product
               </p>
-              <p className="flex items-center">
+              <p className="flex products-center">
                 <FiShield className="mr-3 text-gray-500" /> Money-back Guarantee
               </p>
             </div>

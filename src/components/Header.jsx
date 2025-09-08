@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   FiShoppingCart,
   FiUser,
@@ -6,9 +6,12 @@ import {
   FiMenu,
   FiX,
 } from "react-icons/fi";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router";
 
 const Header = ({ cartCount = 0 }) => {
+  const items = useSelector(state => state.items)
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openMobileMenu, setOpenMobileMenu] = useState(null);
 
@@ -40,14 +43,16 @@ const Header = ({ cartCount = 0 }) => {
 
     return (
       <div className="relative text-gray-600 hover:text-gray-900 transition-colors duration-300">
-        <FiShoppingCart size={22} />
-        {showCounter && (
+        <Link to="/cart">
+          <FiShoppingCart size={22} />
+                  {showCounter && (
           <span
             className={`absolute -top-2 -right-3 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center p-1 ${counterBgClass}`}
           >
             {count > 10 ? "10+" : count}
           </span>
         )}
+        </Link>
       </div>
     );
   };
@@ -78,11 +83,7 @@ const Header = ({ cartCount = 0 }) => {
               <DropdownItem to="/products/Hand Care">Hand Care</DropdownItem>
             </div>
           </div>
-
-          <Link to="#" className="flex items-center">
-            <CartIconWithCounter count={cartCount} />
-          </Link>
-
+            <CartIconWithCounter count={items.length} />
           <div className="relative group">
             <button className="flex items-center text-gray-600 hover:text-gray-900 transition-colors duration-300 cursor-pointer">
               <FiUser size={22} />

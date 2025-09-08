@@ -1,7 +1,15 @@
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router";
+import { addToCart } from "../../rtk/slices/items-slice";
+import updateProductFetch from "../../utils/updateProductFetch"
 
 const ProductCard = ({ product }) => {
   const isOutOfStock = product.quantity === 0;
+
+  const items = useSelector(state => state.items)
+  const dispatch = useDispatch();
+
+  const isInCart = items.some(item => item.productID === product._id);
 
   return (
     <div className="border rounded-lg overflow-hidden group flex flex-col relative">
@@ -32,10 +40,23 @@ const ProductCard = ({ product }) => {
             ${product.price.toFixed(2)}
           </p>
           <button
-            disabled={isOutOfStock}
-            className="w-full bg-gray-100 text-gray-800 font-semibold py-2 px-4 mt-2 rounded-lg hover:bg-gray-200 transition-colors cursor-pointer justify-self-end disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed"
+            disabled={isOutOfStock || isInCart}
+              className={`w-full font-semibold py-2 px-4 mt-2 rounded-lg transition-colors justify-self-end
+              ${
+                isInCart
+                  ? "bg-green-500 text-white cursor-not-allowed"
+                  : isOutOfStock 
+                  ? "text-white cursor-not-allowed bg-red-500" 
+                  :"bg-gray-100 text-gray-800 hover:bg-gray-200 cursor-pointer"
+              }
+            `}
+            onClick={() => {
+              dispatch(addToCart({id: product._id}))
+              updateProductFetch("addProduct", product._id)
+            }}
           >
-            {isOutOfStock ? "Out of Stock" : "Add to cart"}
+
+            {isOutOfStock ? "Out of Stock" : isInCart? "Product Already In Cart": "Add to cart"}
           </button>
         </div>
       </div>
