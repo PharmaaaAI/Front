@@ -1,8 +1,13 @@
-import { API_BASE_URL, USER_ID, token } from "./api-url";
+import { API_BASE_URL } from "./api-url";
 import {clearCart } from "../rtk/slices/items-slice";
 
-export default async function addOrderApi(method, amount, items, dispatch){
-
+export default async function addOrderApi(
+  method,
+  amount,
+  items,
+  dispatch,
+  token
+) {
   try {
     const res = await fetch(`${API_BASE_URL}/orders`, {
       method: "POST",

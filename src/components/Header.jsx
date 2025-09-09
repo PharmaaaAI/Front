@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState, useContext } from "react";
 import {
   FiShoppingCart,
   FiUser,
@@ -6,11 +6,13 @@ import {
   FiMenu,
   FiX,
 } from "react-icons/fi";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Link } from "react-router";
+import { AuthContext } from "../context/AuthContext";
 
-const Header = ({ cartCount = 0 }) => {
-  const items = useSelector(state => state.items)
+const Header = () => {
+  const items = useSelector((state) => state.items);
+  const { user, logout } = useContext(AuthContext);
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openMobileMenu, setOpenMobileMenu] = useState(null);
@@ -28,9 +30,10 @@ const Header = ({ cartCount = 0 }) => {
     </Link>
   );
 
-  const DropdownItem = ({ children, to = "#" }) => (
+  const DropdownItem = ({ children, to = "#", onClick }) => (
     <Link
       to={to}
+      onClick={onClick}
       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 rounded-md"
     >
       {children}
@@ -45,13 +48,13 @@ const Header = ({ cartCount = 0 }) => {
       <div className="relative text-gray-600 hover:text-gray-900 transition-colors duration-300">
         <Link to="/cart">
           <FiShoppingCart size={22} />
-                  {showCounter && (
-          <span
-            className={`absolute -top-2 -right-3 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center p-1 ${counterBgClass}`}
-          >
-            {count > 10 ? "10+" : count}
-          </span>
-        )}
+          {showCounter && (
+            <span
+              className={`absolute -top-2 -right-3 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center p-1 ${counterBgClass}`}
+            >
+              {count > 10 ? "10+" : count}
+            </span>
+          )}
         </Link>
       </div>
     );
@@ -83,19 +86,30 @@ const Header = ({ cartCount = 0 }) => {
               <DropdownItem to="/products/Hand Care">Hand Care</DropdownItem>
             </div>
           </div>
-            <CartIconWithCounter count={items.length} />
-          <div className="relative group">
-            <button className="flex items-center text-gray-600 hover:text-gray-900 transition-colors duration-300 cursor-pointer">
-              <FiUser size={22} />
-              <FiChevronDown className="ml-1 w-4 h-4 transition-transform duration-300 group-hover:rotate-180" />
-            </button>
+          <CartIconWithCounter count={items.length} />
+          {user ? (
+            <div className="relative group">
+              <button className="flex items-center text-gray-600 hover:text-gray-900 transition-colors duration-300 cursor-pointer">
+                <FiUser size={22} />
+                <FiChevronDown className="ml-1 w-4 h-4 transition-transform duration-300 group-hover:rotate-180" />
+              </button>
 
-            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-              <DropdownItem>My Profile</DropdownItem>
-              <DropdownItem>Order History</DropdownItem>
-              <DropdownItem>Logout</DropdownItem>
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                <DropdownItem>My Profile</DropdownItem>
+                <DropdownItem>Order History</DropdownItem>
+                <DropdownItem onClick={logout}>Logout</DropdownItem>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="flex items-center space-x-4">
+              <Link to="/login" className="text-gray-600 hover:text-gray-900">
+                Login
+              </Link>
+              <Link to="/signup" className="text-gray-600 hover:text-gray-900">
+                Sign Up
+              </Link>
+            </div>
+          )}
         </div>
 
         <div className="md:hidden">
@@ -157,43 +171,50 @@ const Header = ({ cartCount = 0 }) => {
                 </div>
               )}
             </div>
-
-            <div>
-              <button
-                onClick={() => handleMobileMenuToggle("user")}
-                className="w-full flex justify-between items-center py-2 text-gray-600 hover:text-gray-900 transition-colors duration-300"
-              >
-                <span>My Account</span>
-                <FiChevronDown
-                  className={`w-5 h-5 transition-transform duration-300 ${
-                    openMobileMenu === "user" ? "rotate-180" : ""
-                  }`}
-                />
-              </button>
-              {openMobileMenu === "user" && (
-                <div className="pl-4 pb-2 flex flex-col space-y-2">
-                  <Link to="#" className="text-gray-500 hover:text-gray-800">
-                    My Profile
-                  </Link>
-                  <Link to="#" className="text-gray-500 hover:text-gray-800">
-                    Order History
-                  </Link>
-                  <Link to="#" className="text-gray-500 hover:text-gray-800">
-                    Settings
-                  </Link>
-                  <Link to="#" className="text-gray-500 hover:text-gray-800">
-                    Logout
-                  </Link>
-                </div>
-              )}
-            </div>
+            {user ? (
+              <div>
+                <button
+                  onClick={() => handleMobileMenuToggle("user")}
+                  className="w-full flex justify-between items-center py-2 text-gray-600 hover:text-gray-900 transition-colors duration-300"
+                >
+                  <span>My Account</span>
+                  <FiChevronDown
+                    className={`w-5 h-5 transition-transform duration-300 ${
+                      openMobileMenu === "user" ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+                {openMobileMenu === "user" && (
+                  <div className="pl-4 pb-2 flex flex-col space-y-2">
+                    <Link to="#" className="text-gray-500 hover:text-gray-800">
+                      My Profile
+                    </Link>
+                    <Link to="#" className="text-gray-500 hover:text-gray-800">
+                      Order History
+                    </Link>
+                    <Link
+                      to="#"
+                      onClick={logout}
+                      className="text-gray-500 hover:text-gray-800"
+                    >
+                      Logout
+                    </Link>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <>
+                <NavLink to="/login">Login</NavLink>
+                <NavLink to="/signup">Sign Up</NavLink>
+              </>
+            )}
 
             <Link
-              to="#"
+              to="/cart"
               className="flex justify-between items-center py-2 text-gray-600 hover:text-gray-900"
             >
               <span>My Cart</span>
-              <CartIconWithCounter count={cartCount} />
+              <CartIconWithCounter count={items.length} />
             </Link>
           </div>
         </div>

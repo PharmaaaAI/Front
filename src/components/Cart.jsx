@@ -1,18 +1,21 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { removeFromCart, increaseItemInCart, decreaseItemInCart, clearCart } from "../rtk/slices/items-slice";
 import { API_BASE_URL } from "../utils/api-url";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { jwtDecode } from "jwt-decode";
 import updateBack from "../utils/updateProductFetch";
 import Payment from "./Payment";
 import addOrderApi from "../utils/addOrderApi";
+import { AuthContext } from "../context/AuthContext.jsx";
 
 const formatEGP = (n) => `EGP ${n}`
 
 
 export default function Cart() {
-
-  const items = useSelector(state => state.items)
+  const { user, token } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const items = useSelector((state) => state.items);
   const dispatch = useDispatch();
 
   const [isCheckOutClicked, setIsCheckOutClicked] = useState(false);
@@ -59,18 +62,25 @@ export default function Cart() {
   }
   const dec = (id) => {
     dispatch(decreaseItemInCart(id));
-    updateBack("decreaseProduct", id)
-  }
+    if (user) {
+      const decodedToken = jwtDecode(token);
+      updateBack("decreaseProduct", id, token, decodedToken.userId);
+    }
+  };
   const remove = (id) => {
     dispatch(removeFromCart(id));
-    updateBack("removeProduct", id)
-  } 
+    if (user) {
+      const decodedToken = jwtDecode(token);
+      updateBack("removeProduct", id, token, decodedToken.userId);
+    }
+  };
   const clear = () => {
-    dispatch(clearCart())
-    updateBack("clear")
-  }
-
-
+    dispatch(clearCart());
+    if (user) {
+      const decodedToken = jwtDecode(token);
+      updateBack("clear", null, token, decodedToken.userId);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 py-10">
@@ -97,7 +107,7 @@ export default function Cart() {
             <section className="lg:col-span-2 space-y-4">
               {products.map((it) => (
                 <CartRow
-                  key={it.id}
+                  key={it._id}
                   item={it}
                   onInc={() => inc(it._id)}
                   onDec={() => dec(it._id)}
@@ -128,12 +138,16 @@ export default function Cart() {
                   className="w-full rounded-2xl bg-gray-900 px-4 py-3 text-sm font-medium text-white shadow-sm hover:bg-black focus:outline-none focus:ring-2 focus:ring-gray-300 disabled:cursor-not-allowed disabled:opacity-50"
                   disabled={items.length === 0}
                   onClick={() => {
-                    if(method === "Visa") 
-                      setIsCheckOutClicked(true);
-                    else if (method === "Cash")
-                      addOrderApi(method, total, items, dispatch)
-                    else{
-                      setShowPopup(true)
+                    if (!user) {
+                      navigate("/login", { state: { from: "/cart" } });
+                    } else {
+                      if (method === "Visa") {
+                        setIsCheckOutClicked(true);
+                      } else if (method === "Cash") {
+                        addOrderApi(method, total, items, dispatch, token);
+                      } else {
+                        setShowPopup(true);
+                      }
                     }
                   }}
                 >

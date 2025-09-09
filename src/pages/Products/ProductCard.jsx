@@ -1,9 +1,13 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router";
+import { useContext } from "react";
+import { jwtDecode } from "jwt-decode";
 import { addToCart } from "../../rtk/slices/items-slice";
 import updateProductFetch from "../../utils/updateProductFetch"
+import { AuthContext } from "../../context/AuthContext.jsx";
 
 const ProductCard = ({ product }) => {
+  const { user, token } = useContext(AuthContext);
   const isOutOfStock = product.quantity === 0;
 
   const items = useSelector(state => state.items)
@@ -41,7 +45,7 @@ const ProductCard = ({ product }) => {
           </p>
           <button
             disabled={isOutOfStock || isInCart}
-              className={`w-full font-semibold py-2 px-4 mt-2 rounded-lg transition-colors justify-self-end
+            className={`w-full font-semibold py-2 px-4 mt-2 rounded-lg transition-colors justify-self-end
               ${
                 isInCart
                   ? "bg-green-500 text-white cursor-not-allowed"
@@ -51,8 +55,16 @@ const ProductCard = ({ product }) => {
               }
             `}
             onClick={() => {
-              dispatch(addToCart({id: product._id}))
-              updateProductFetch("addProduct", product._id)
+              dispatch(addToCart({ id: product._id }));
+              if (user) {
+                const decodedToken = jwtDecode(token);
+                updateProductFetch(
+                  "addProduct",
+                  product._id,
+                  token,
+                  decodedToken.userId
+                );
+              }
             }}
           >
 
