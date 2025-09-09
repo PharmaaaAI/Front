@@ -1,8 +1,9 @@
-import React, { useState } from "react";
-import { BrowserRouter, Routes, Route } from "react-router";
+import { Routes, Route } from "react-router";
+import { useEffect, useContext } from "react";
+import { useDispatch } from "react-redux";
+import { jwtDecode } from "jwt-decode";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
-import Home from "./pages/Home";
 import AboutUs from "./pages/AboutUs";
 import ContactUs from "./pages/Support/ContactUs";
 import ScrollToTop from "./components/ScrollToTop";
@@ -14,45 +15,28 @@ import ProductDetails from "./pages/Products/ProductDetails";
 import Products from "./pages/Products/Products";
 import HeroSection from "./components/HeroSection"
 import Cart from "./components/Cart";
-import InitialCart from "./components/InitialCart"
-import { useEffect } from "react";
-import { useNavigate } from "react-router";
-import { token } from "./utils/api-url"; // wherever you store it
-import { isTokenValid } from "./utils/isTokenValid";
-import SessionExpiredModal from "./components/SessionExpiredModal";
+import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
+import { AuthContext } from "./context/AuthContext.jsx";
+import { fetchItems } from "./rtk/slices/items-slice";
 
-export const App = () => {
+const App = () => {
+  const dispatch = useDispatch();
+  const { user, token } = useContext(AuthContext);
 
-  const navigate = useNavigate();
-  const [showModal, setShowModal] = useState(false);
+  useEffect(() => {
+    if (user) {
+      const decodedToken = jwtDecode(token);
+      dispatch(fetchItems({ userId: decodedToken.userId, token }));
+    }
+  }, [user, dispatch, token]);
 
-    useEffect(() => {
-    const checkToken = () => {
-      console.log("checking")
-      if (!isTokenValid(token)) {
-        setShowModal(true);
-      }
-    };
-
-    checkToken();
-
-    const interval = setInterval(checkToken, 30 * 1000);
-    return () => clearInterval(interval);
-  }, [navigate]);
-
-    const handleModalClose = () => {
-      setShowModal(false);
-      navigate("/login");
-    };
   return (
     <>
       <ScrollToTop />
       <div className="min-h-screen flex flex-col font-fredoka">
         <Header />
-
         <main className="flex-1">
-          <InitialCart />
-          {showModal && <SessionExpiredModal onClose={handleModalClose} />}
           <Routes>
             <Route index element={<HeroSection/>} />
             <Route path="/about-us" element={<AboutUs />} />
@@ -65,6 +49,8 @@ export const App = () => {
             <Route path="/cart" element={<Cart />} />
             <Route path="/products/:category" element={<Products />} />
             <Route path="/terms-of-service" element={<TermsOfService />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
           </Routes>
         </main>
 

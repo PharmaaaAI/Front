@@ -1,15 +1,18 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-import { API_BASE_URL, USER_ID, token } from "../../utils/api-url";
+import { API_BASE_URL } from "../../utils/api-url";
 
-export const fetchItems = createAsyncThunk("itemsSlice/fetchCart", async () => {
+const initialState = JSON.parse(localStorage.getItem("cart")) || [];
 
-  const res = await fetch(`${API_BASE_URL}/users/${USER_ID}/cart`, {
-    method: "GET",
-    headers: {
-      "Authorization": `Bearer ${token}`,
-    },
-  });
+export const fetchItems = createAsyncThunk(
+  "itemsSlice/fetchCart",
+  async ({ userId, token }) => {
+    const res = await fetch(`${API_BASE_URL}/users/${userId}/cart`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
 
   if (res.status === 401) {
@@ -29,23 +32,45 @@ const itemsSlice = createSlice({
         productID: action.payload.id,
         quantity: action.payload.quantity || 1
       })
+      localStorage.setItem("cart", JSON.stringify(state));
     },
     removeFromCart: (state, action) => {
-      return state.filter(prod => prod.productID !== action.payload)
+      const newState = state.filter(
+        (prod) => prod.productID !== action.payload
+      );
+      localStorage.setItem("cart", JSON.stringify(newState));
+      return newState;
     },
     increaseItemInCart: (state, action) => {
-      return state.map(prod => prod.productID === action.payload? {productID: prod.productID, quantity: prod.quantity + 1} : prod)
+      const newState = state.map((prod) =>
+        prod.productID === action.payload
+          ? { productID: prod.productID, quantity: prod.quantity + 1 }
+          : prod
+      );
+      localStorage.setItem("cart", JSON.stringify(newState));
+      return newState;
     },
     decreaseItemInCart: (state, action) => {
-      return state.map(prod => prod.productID === action.payload? {productID: prod.productID, quantity: Math.max(prod.quantity - 1, 1)} : prod)
+      const newState = state.map((prod) =>
+        prod.productID === action.payload
+          ? {
+              productID: prod.productID,
+              quantity: Math.max(prod.quantity - 1, 1),
+            }
+          : prod
+      );
+      localStorage.setItem("cart", JSON.stringify(newState));
+      return newState;
     },
     clearCart: (state, action) => {
+      localStorage.removeItem("cart");
       return [];
     },
 
   },
   extraReducers: (builder) => {
     builder.addCase(fetchItems.fulfilled, (state, action) => {
+      localStorage.setItem("cart", JSON.stringify(action.payload));
       return action.payload;
     })
   }

@@ -1,7 +1,7 @@
-import { API_BASE_URL, USER_ID, token } from "../utils/api-url";
+import { API_BASE_URL } from "../utils/api-url";
 
-const updateProductFetch = (type, id) => {
-  fetch(`${API_BASE_URL}/users/${USER_ID}/cart?type=${type}`, {
+const updateProductFetch = (type, id, token, userId) => {
+  fetch(`${API_BASE_URL}/users/${userId}/cart?type=${type}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",

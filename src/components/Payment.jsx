@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import {
   Elements,
@@ -8,15 +8,14 @@ import {
 } from "@stripe/react-stripe-js";
 import { useSelector, useDispatch } from "react-redux";
 import addOrderApi from "../utils/addOrderApi";
+import { AuthContext } from "../context/AuthContext.jsx";
 
 const stripePromise = loadStripe("pk_test_51RzZu6FxxGGRs7ZcdappY7xy6wVDf00rVGUoZJJFDs0VvSyUy1ZPPihXM6D2s5wHxzaNvB1aIjskAQxOFntL18Rc00DugaCRnD");
 
 
 
-function CheckoutForm({method, amount, items, dispatch}) {
-
-  {console.log("method 2: ", method)}
-
+function CheckoutForm({ method, amount, items, dispatch }) {
+  const { token } = useContext(AuthContext);
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = React.useState(false);
@@ -29,21 +28,21 @@ function CheckoutForm({method, amount, items, dispatch}) {
     setLoading(true);
     setMessage("");
 
+    try {
+      let result;
+      const data = await addOrderApi(method, amount, items, dispatch, token);
+      if (data && data.clientSecret) {
+        result = await stripe.confirmCardPayment(data.clientSecret, {
+          payment_method: {
+            card: elements.getElement(CardElement),
+          },
+        });
 
-    try{
-      // Confirm payment
-      const data = await addOrderApi(method, amount, items, dispatch)
-      console.log("res: ", data);
-      const result = await stripe.confirmCardPayment(data.clientSecret, {
-        payment_method: {
-          card: elements.getElement(CardElement),
-        },
-      });
-
-      if (result.error) {
-        setMessage(`❌ ${result.error.message}`);
-      } else if (result.paymentIntent.status === "succeeded") {
-        setMessage("✅ Payment successful!");
+        if (result.error) {
+          setMessage(`❌ ${result.error.message}`);
+        } else if (result.paymentIntent.status === "succeeded") {
+          setMessage("✅ Payment successful!");
+        }
       }
     } catch (err) {
       setMessage(`⚠ ${err.message}`);
@@ -89,14 +88,19 @@ function CheckoutForm({method, amount, items, dispatch}) {
   );
 }
 
-export default function Payment({method, amount}) {
-  const items = useSelector(state => state.items)
+export default function Payment({ method, amount }) {
+  const items = useSelector((state) => state.items);
   const dispatch = useDispatch();
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <Elements stripe={stripePromise}>
-        <CheckoutForm method={method} amount={amount} items={items} dispatch={dispatch}/> 
-      </Elements>        
+        <CheckoutForm
+          method={method}
+          amount={amount}
+          items={items}
+          dispatch={dispatch}
+        />
+      </Elements>
     </div>
   );
 }
