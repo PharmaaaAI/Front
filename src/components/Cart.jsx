@@ -57,9 +57,12 @@ export default function Cart() {
   const [showPopup, setShowPopup] = useState(false);
   
   const inc = (id) => {
-    dispatch(increaseItemInCart(id))
-    updateBack("increaseProduct", id)
-  }
+    dispatch(increaseItemInCart(id));
+    if (user) {
+      const decodedToken = jwtDecode(token);
+      updateBack("increaseProduct", id, token, decodedToken.userId);
+    }
+  };
   const dec = (id) => {
     dispatch(decreaseItemInCart(id));
     if (user) {
@@ -90,7 +93,7 @@ export default function Cart() {
             <h1 className="text-2xl font-semibold tracking-tight text-gray-900">Your Cart</h1>
             <p className="text-sm text-gray-500">{counts} item{counts !== 1 ? "s" : ""}</p>
           </div>
-          {items.length > 0 && (
+          {items && items.length > 0 && (
             <button
               onClick={clear}
               className="text-sm font-medium text-red-600 hover:text-red-700"
@@ -100,7 +103,7 @@ export default function Cart() {
           )}
         </header>
 
-        {items.length === 0 ? (
+        {!items || items.length === 0 ? (
           <EmptyState />
         ) : (
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -136,7 +139,7 @@ export default function Cart() {
 
                 <button
                   className="w-full rounded-2xl bg-gray-900 px-4 py-3 text-sm font-medium text-white shadow-sm hover:bg-black focus:outline-none focus:ring-2 focus:ring-gray-300 disabled:cursor-not-allowed disabled:opacity-50"
-                  disabled={items.length === 0}
+                  disabled={!items || items.length === 0}
                   onClick={() => {
                     if (!user) {
                       navigate("/login", { state: { from: "/cart" } });

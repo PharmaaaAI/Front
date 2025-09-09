@@ -7,21 +7,25 @@ const initialState = JSON.parse(localStorage.getItem("cart")) || [];
 export const fetchItems = createAsyncThunk(
   "itemsSlice/fetchCart",
   async ({ userId, token }) => {
-    const res = await fetch(`${API_BASE_URL}/users/${userId}/cart`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    if (userId && token) {
+      const res = await fetch(`${API_BASE_URL}/users/${userId}/cart`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
+      if (res.status === 401) {
+        return [];
+      }
 
-  if (res.status === 401) {
-    return [];
+      const data = await res.json();
+      return data.data;
+    } else {
+      return JSON.parse(localStorage.getItem("cart")) || [];
+    }
   }
-
-  const data = await res.json();
-  return data.data;
-})
+);
 
 const itemsSlice = createSlice({
   initialState: [],

@@ -86,7 +86,7 @@ const Header = () => {
               <DropdownItem to="/products/Hand Care">Hand Care</DropdownItem>
             </div>
           </div>
-          <CartIconWithCounter count={items.length} />
+          <CartIconWithCounter count={items?.length || 0} />
           {user ? (
             <div className="relative group">
               <button className="flex items-center text-gray-600 hover:text-gray-900 transition-colors duration-300 cursor-pointer">
@@ -214,7 +214,7 @@ const Header = () => {
               className="flex justify-between items-center py-2 text-gray-600 hover:text-gray-900"
             >
               <span>My Cart</span>
-              <CartIconWithCounter count={items.length} />
+              <CartIconWithCounter count={items?.length || 0} />
             </Link>
           </div>
         </div>

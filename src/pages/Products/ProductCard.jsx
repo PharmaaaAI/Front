@@ -10,10 +10,10 @@ const ProductCard = ({ product }) => {
   const { user, token } = useContext(AuthContext);
   const isOutOfStock = product.quantity === 0;
 
-  const items = useSelector(state => state.items)
+  const items = useSelector((state) => state.items);
   const dispatch = useDispatch();
 
-  const isInCart = items.some(item => item.productID === product._id);
+  const isInCart = items ? items.some((item) => item.productID === product._id) : false;
 
   return (
     <div className="border rounded-lg overflow-hidden group flex flex-col relative">
