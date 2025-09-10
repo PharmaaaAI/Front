@@ -19,6 +19,7 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import { AuthContext } from "./context/AuthContext.jsx";
 import { fetchItems } from "./rtk/slices/items-slice";
+import Categories from "./utils/categories.jsx";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -33,6 +34,7 @@ const App = () => {
 
   return (
     <>
+      <Categories />
       <ScrollToTop />
       <div className="min-h-screen flex flex-col font-fredoka">
         <Header />

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { FiFilter, FiSearch } from "react-icons/fi";
+import { useSelector } from "react-redux";
 
 const FilterSidebar = ({
   filters,
@@ -8,7 +9,8 @@ const FilterSidebar = ({
   category,
 }) => {
   const [showFilters, setShowFilters] = useState(true);
-  const categories = ["Skincare", "Hair Care", "Body Care", "Hand Care"];
+  const categories = useSelector((state) => state.categories);
+
 
   return (
     <aside className="lg:col-span-3">
@@ -82,8 +84,8 @@ const FilterSidebar = ({
             >
               <option value="">All Categories</option>
               {categories.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
+                <option key={cat.name} value={cat.name}>
+                  {cat.name}
                 </option>
               ))}
             </select>

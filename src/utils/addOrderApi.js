@@ -9,6 +9,7 @@ export default async function addOrderApi(
   token
 ) {
   try {
+    console.log("amount: ", amount)
     const res = await fetch(`${API_BASE_URL}/orders`, {
       method: "POST",
       headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}`},
