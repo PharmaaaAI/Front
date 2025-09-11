@@ -4,12 +4,13 @@ import Videoskin from "../assets/Clear Skin Journey Quiz-VEED.mp4";
 const HeroComponent = () => {
   return (
     <div>
-      <div className=" bg-gray-50">
+       <div className=" bg-gray-50">
         <section className="pt-12 bg-gray-50 sm:pt-16">
           <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
             <section className="relative py-12 overflow-hidden sm:pb-16 lg:pb-20 xl:pb-24">
               <div className="px-4 mx-auto relative sm:px-6 lg:px-8 max-w-7xl">
-                <div className="grid items-center grid-cols-2 gap-y-24 lg:grid-cols-2 gap-x-24">
+     <div className="grid grid-cols-1 lg:grid-cols-2 gap-y-12 lg:gap-x-24 items-center">
+
                   <div>
                     <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
                       Tired of Guessing Your
@@ -71,6 +72,8 @@ const HeroComponent = () => {
           </div>
         </section>
       </div>
+
+
     </div>
   );
 };
