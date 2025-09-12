@@ -5,11 +5,9 @@ export default async function addOrderApi(
   method,
   amount,
   items,
-  dispatch,
   token
 ) {
   try {
-    console.log("amount: ", amount)
     const res = await fetch(`${API_BASE_URL}/orders`, {
       method: "POST",
       headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}`},
@@ -20,8 +18,13 @@ export default async function addOrderApi(
       })
     });
 
-    const { data } = await res.json();
-    dispatch(clearCart());
+    const resJson  = await res.json();
+    console.log(resJson);
+    if(resJson.status !== "success")
+    {
+      return resJson.message;
+    }
+    const {data} = resJson;
     return data;
 
   } catch (err) {

@@ -8,6 +8,7 @@ import updateBack from "../utils/updateProductFetch";
 import Payment from "./Payment";
 import addOrderApi from "../utils/addOrderApi";
 import { AuthContext } from "../context/AuthContext.jsx";
+import SessionExpiredModal from "./SessionExpiredModal.jsx"
 
 const formatEGP = (n) => `EGP ${n}`
 
@@ -54,8 +55,9 @@ export default function Cart() {
   const cashFee = method === "Cash" ? 10 : 0;
   const total = parseFloat(Math.max(0, subtotal + shippingCost + cashFee).toFixed(2));
 
-  const [showPopup, setShowPopup] = useState(false);
-  
+  const [showPopup, setShowPopup] = useState([false, "", ""]);
+  const [show, setShow] = useState(false);
+  const [sessionExpired, setSessionExpired] = useState(false);
   const inc = (id) => {
     dispatch(increaseItemInCart(id));
     if (user) {
@@ -140,16 +142,31 @@ export default function Cart() {
                 <button
                   className="w-full rounded-2xl bg-gray-900 px-4 py-3 text-sm font-medium text-white shadow-sm hover:bg-black focus:outline-none focus:ring-2 focus:ring-gray-300 disabled:cursor-not-allowed disabled:opacity-50"
                   disabled={!items || items.length === 0}
-                  onClick={() => {
+                  onClick={async () => {
+                    const now = Math.floor(Date.now() / 1000)
+                    if(jwtDecode(token).exp < now)
+                      setSessionExpired(true);
                     if (!user) {
                       navigate("/login", { state: { from: "/cart" } });
                     } else {
                       if (method === "Visa") {
                         setIsCheckOutClicked(true);
                       } else if (method === "Cash") {
-                        addOrderApi(method, total, items, dispatch, token);
+                        const message = await addOrderApi(method, total, items, token);
+                        if(message)
+                        {
+                          const id = message.split(' ')[8];
+                          const availableQuantity = Number.parseInt(message.split(' ')[10]);
+                          const prod = products.find(prod => prod._id === id)
+                          setShowPopup([true, "product quantity is not available", `the available quantity of the product ${prod.name} is ${availableQuantity}.`])
+                        }
+                        else{
+                          setShow(true)
+                          setTimeout(() => setShow(false), 2000)
+                          clear()
+                        }
                       } else {
-                        setShowPopup(true);
+                        setShowPopup([true, "Payment Required", `Please select a payment method before continuing.`])
                       }
                     }
                   }}
@@ -165,9 +182,17 @@ export default function Cart() {
           </div>
         )}
 
-        {isCheckOutClicked && <Payment method={method} amount={total}/>}
+        {isCheckOutClicked && <Payment method={method} amount={total} clear={clear} setShow={setShow}/>}
       </div>
-      {showPopup && PopUpMessage(setShowPopup)}
+      {showPopup[0] && PopUpMessage(showPopup, setShowPopup)}
+      {show && successMessage(setShow)}
+      
+      {sessionExpired && 
+        <SessionExpiredModal onClose={() => {
+          setSessionExpired(false)
+          navigate("/login", { state: { from: "/cart" } })
+        }} />
+      }
     </div>
 
     
@@ -311,21 +336,50 @@ function PaymentMethodSelect({method, setMethod, setIsCheckOutClicked}) {
   );
 }
 
-function PopUpMessage(setShowPopup){
+function PopUpMessage(showPopUp, setShowPopup){
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40">
       <div className="bg-white p-6 rounded-2xl shadow-lg w-80 text-center">
-        <h3 className="text-lg font-semibold mb-2">Payment Required</h3>
+        <h3 className="text-lg font-semibold mb-2">{showPopUp[1]}</h3>
         <p className="text-gray-600 mb-4">
-          Please select a payment method before continuing.
+          {showPopUp[2]}
         </p>
         <button
-          onClick={() => setShowPopup(false)}
+          onClick={() => setShowPopup([false, '', ''])}
           className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
         >
           Okay
         </button>
       </div>
     </div>
+  )
+}
+
+function successMessage(setShow){
+  return(  
+  <div className="fixed top-5 right-5 z-50">
+    <div className="flex items-center p-4 max-w-sm text-green-700 bg-green-100 border border-green-300 rounded-2xl shadow-lg">
+      <svg
+        className="w-6 h-6 mr-2 text-green-600"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M5 13l4 4L19 7"
+        />
+      </svg>
+      <span className="font-medium">Your order has been submitted successfully!</span>
+      <button
+        onClick={() => setShow(false)}
+        className="ml-4 text-green-700 hover:text-green-900"
+      >
+        ✕
+      </button>
+    </div>
+  </div>
   )
 }

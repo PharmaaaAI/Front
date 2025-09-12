@@ -6,7 +6,7 @@ import {
   useStripe,
   useElements,
 } from "@stripe/react-stripe-js";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import addOrderApi from "../utils/addOrderApi";
 import { AuthContext } from "../context/AuthContext.jsx";
 
@@ -14,12 +14,13 @@ const stripePromise = loadStripe("pk_test_51RzZu6FxxGGRs7ZcdappY7xy6wVDf00rVGUoZ
 
 
 
-function CheckoutForm({ method, amount, items, dispatch }) {
+function CheckoutForm({ method, amount, items, clear, setShow }) {
   const { token } = useContext(AuthContext);
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = React.useState(false);
   const [message, setMessage] = React.useState("");
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,7 +31,7 @@ function CheckoutForm({ method, amount, items, dispatch }) {
 
     try {
       let result;
-      const data = await addOrderApi(method, amount, items, dispatch, token);
+      const data = await addOrderApi(method, amount, items, token);
       if (data && data.clientSecret) {
         result = await stripe.confirmCardPayment(data.clientSecret, {
           payment_method: {
@@ -41,6 +42,9 @@ function CheckoutForm({ method, amount, items, dispatch }) {
         if (result.error) {
           setMessage(`❌ ${result.error.message}`);
         } else if (result.paymentIntent.status === "succeeded") {
+          setShow(true)
+          setTimeout(() => setShow(false), 2000)
+          clear()
           setMessage("✅ Payment successful!");
         }
       }
@@ -88,9 +92,8 @@ function CheckoutForm({ method, amount, items, dispatch }) {
   );
 }
 
-export default function Payment({ method, amount }) {
+export default function Payment({ method, amount, clear, setShow }) {
   const items = useSelector((state) => state.items);
-  const dispatch = useDispatch();
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <Elements stripe={stripePromise}>
@@ -98,7 +101,8 @@ export default function Payment({ method, amount }) {
           method={method}
           amount={amount}
           items={items}
-          dispatch={dispatch}
+          clear={clear}
+          setShow={setShow}
         />
       </Elements>
     </div>
