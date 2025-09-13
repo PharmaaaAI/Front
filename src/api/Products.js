@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://back-phi-jet.vercel.app/api";
+import { API_BASE_URL } from "../utils/api-url";
 
 export const fetchProducts = async ({ queryKey }) => {
   const [

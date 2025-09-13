@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router";
-import { useEffect, useContext } from "react";
+import { useEffect, useContext, useState } from "react";
 import { useDispatch } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import Footer from "./components/Footer";
@@ -20,10 +20,13 @@ import SignupPage from "./pages/SignupPage";
 import { AuthContext } from "./context/AuthContext.jsx";
 import { fetchItems } from "./rtk/slices/items-slice";
 import Categories from "./utils/categories.jsx";
+import Chatbot from "./components/Chatbot.jsx";
+import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
 
 const App = () => {
   const dispatch = useDispatch();
   const { user, token } = useContext(AuthContext);
+  const [isChatbotOpen, setIsChatbotOpen] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -57,6 +60,17 @@ const App = () => {
         </main>
 
         <Footer />
+        {user && (
+          <>
+            <button
+              onClick={() => setIsChatbotOpen(!isChatbotOpen)}
+              className="fixed bottom-4 right-4 bg-blue-500 text-white p-4 rounded-full shadow-lg"
+            >
+              <IoChatbubbleEllipsesOutline size={25}/>
+            </button>
+            {isChatbotOpen && <Chatbot />}
+          </>
+        )}
       </div>
     </>
   );
