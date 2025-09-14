@@ -1,7 +1,25 @@
 import Avatar from "./Avatar";
 import Videoskin from "../assets/Clear Skin Journey Quiz-VEED.mp4";
+import { useContext, useEffect } from "react";
+import { AuthContext } from "../context/AuthContext.jsx";
 
 const HeroComponent = () => {
+
+
+  const { login } = useContext(AuthContext);
+  
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("token");
+
+    if (token) {
+      const fetchLogin = async () => {
+        await login({ token }); 
+      };
+      fetchLogin();
+    }
+  }, []);
+
   return (
     <div>
        <div className=" bg-gray-50">

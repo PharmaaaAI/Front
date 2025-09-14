@@ -32,6 +32,7 @@ const App = () => {
     if (user) {
       const decodedToken = jwtDecode(token);
       dispatch(fetchItems({ userId: decodedToken.userId, token }));
+      console.log("decoded token: ", decodedToken)
     }
   }, [user, dispatch, token]);
 

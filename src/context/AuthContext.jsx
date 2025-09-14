@@ -19,13 +19,23 @@ export const AuthProvider = ({ children }) => {
   }, [token]);
 
   const login = async (credentials) => {
-    const data = await loginApi(credentials);
-    if (data.token) {
-      localStorage.setItem("token", data.token);
-      setToken(data.token);
-      setUser({ token: data.token });
+    let token;
+    if(credentials.email && credentials.password)
+    {
+      const data = await loginApi(credentials);
+      token = data.token
     }
-    return data;
+    else
+    {
+      token = credentials.token
+    }
+
+    if (token) {
+      localStorage.setItem("token", token);
+      setToken(token);
+      setUser({ token: token });
+    }
+    return token;
   };
 
   const signup = async (userData) => {
