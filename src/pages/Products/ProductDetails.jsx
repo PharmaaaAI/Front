@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 
 import {
   FiChevronRight,
@@ -23,6 +24,13 @@ import {
   increaseItemInCart,
   decreaseItemInCart,
 } from "../../rtk/slices/items-slice";
+import updateProductFetch from "../../utils/updateProductFetch";
+import {
+  addToCart,
+  removeFromCart,
+  increaseItemInCart,
+  decreaseItemInCart,
+} from "../../rtk/slices/items-slice";
 import { Trash2, Minus, Plus } from "lucide-react";
 import { jwtDecode } from "jwt-decode";
 import { AuthContext } from "../../context/AuthContext.jsx";
@@ -30,6 +38,7 @@ import { AuthContext } from "../../context/AuthContext.jsx";
 const ProductDetails = () => {
   let params = useParams();
   const { id } = params;
+  const { token } = useContext(AuthContext);
   const {
     data: product,
     isLoading,
@@ -54,9 +63,12 @@ const ProductDetails = () => {
   const isOutOfStock = product?.quantity === 0;
 
   const items = useSelector((state) => state.items);
+  const items = useSelector((state) => state.items);
   const dispatch = useDispatch();
   const item = items.find((product) => product.productID === id);
+  const item = items.find((product) => product.productID === id);
 
+  console.log("quantity => ", quantity);
   console.log("quantity => ", quantity);
 
   if (isLoading) {
@@ -137,8 +149,15 @@ const ProductDetails = () => {
             </p>
 
             {item ? (
+            {item ? (
               // <div className="flex items-center justify-between border rounded-full overflow-hidden shadow-inner">
               <div className="flex items-center justify-between border rounded-full w-3xs overflow-hidden shadow-inner">
+                <button
+                  aria-label={`Decrease quantity of ${product.name}`}
+                  onClick={() => {
+                    item.quantity > 1 ? dec(product._id) : remove(product._id);
+                  }}
+                  className={`px-4 py-2 cursor-pointer
                 <button
                   aria-label={`Decrease quantity of ${product.name}`}
                   onClick={() => {
@@ -151,7 +170,33 @@ const ProductDetails = () => {
                     ? "bg-gray-100 hover:bg-gray-200"
                     : "bg-red-500 hover:bg-red-600"
                 }
+                ${
+                  item.quantity > 1
+                    ? "bg-gray-100 hover:bg-gray-200"
+                    : "bg-red-500 hover:bg-red-600"
+                }
                   `}
+                >
+                  {item.quantity > 1 ? (
+                    <Minus className="w-3.5" size={20} />
+                  ) : (
+                    <Trash2 className="w-3.5" size={20} />
+                  )}
+                </button>
+                <span className="px-3 text-sm tabular-nums">
+                  {item.quantity}
+                </span>
+                <button
+                  aria-label={`Increase quantity of ${product.name}`}
+                  onClick={() => {
+                    inc(product._id);
+                  }}
+                  className="px-4 py-2 bg-gray-100 hover:bg-gray-200 cursor-pointer"
+                >
+                  <Plus className="w-3.5" size={20} />
+                </button>
+              </div>
+            ) : (
                 >
                   {item.quantity > 1 ? (
                     <Minus className="w-3.5" size={20} />
@@ -185,6 +230,9 @@ const ProductDetails = () => {
                   <span className="px-5 py-2">
                     {isOutOfStock ? 0 : quantity}
                   </span>
+                  <span className="px-5 py-2">
+                    {isOutOfStock ? 0 : quantity}
+                  </span>
                   <button
                     onClick={() => handleQuantityChange(1)}
                     disabled={isOutOfStock}
@@ -212,8 +260,14 @@ const ProductDetails = () => {
                     : item
                     ? "Product Already In Cart"
                     : "Add to cart"}
+                  {isOutOfStock
+                    ? "Out of Stock"
+                    : item
+                    ? "Product Already In Cart"
+                    : "Add to cart"}
                 </button>
               </div>
+            )}
             )}
 
             <div className="border-t mt-6 pt-6 space-y-3 text-sm text-gray-600">
