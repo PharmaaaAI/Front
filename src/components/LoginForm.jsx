@@ -63,6 +63,25 @@ const LoginForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const data = await login({ email, password });
+    if (data.token) {
+      const guestCart = JSON.parse(localStorage.getItem("cart"));
+      if (guestCart) {
+        guestCart.forEach((item) => {
+          dispatch(addToCart({ id: item.productID, quantity: item.quantity }));
+          updateProductFetch(
+            "addProduct",
+            item.productID,
+            data.token,
+            data.userId
+          );
+        });
+        localStorage.removeItem("cart");
+      }
+      navigate("/");
+    } else {
+      setError(data.message || "Failed to login");
+    }
     setIsLoading(true);
     setError("");
     
