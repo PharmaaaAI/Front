@@ -1,14 +1,17 @@
 import { API_BASE_URL } from "../utils/api-url";
 
-const updateProductFetch = (type, id, token, userId) => {
+const updateProductFetch = (type, id, token, userId, quantity) => {
+  let body = {};
+  body.productID = id;
+  if (quantity) body.quantity = quantity;
   fetch(`${API_BASE_URL}/users/${userId}/cart?type=${type}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
     },
-    body: id ? JSON.stringify({ productID: id }) : undefined,
-  })
-}
+    body: JSON.stringify(body),
+  });
+};
 
 export default updateProductFetch;
