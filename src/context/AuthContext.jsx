@@ -1,11 +1,13 @@
 import React, { createContext, useState, useEffect } from "react";
 import { isTokenValid } from "../utils/isTokenValid";
 import { login as loginApi, signup as signupApi } from "../api/auth";
+import { jwtDecode } from "jwt-decode";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token"));
+  const [decodedToken, setDecodedToken] = useState({});
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -13,6 +15,7 @@ export const AuthProvider = ({ children }) => {
       // You might want to fetch user data from the backend here
       // For now, we'll just set a placeholder
       setUser({ token });
+      setDecodedToken(jwtDecode(token));
     } else {
       setUser(null);
     }
@@ -20,14 +23,11 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (credentials) => {
     let token;
-    if(credentials.email && credentials.password)
-    {
+    if (credentials.email && credentials.password) {
       const data = await loginApi(credentials);
-      token = data.token
-    }
-    else
-    {
-      token = credentials.token
+      token = data.token;
+    } else {
+      token = credentials.token;
     }
 
     if (token) {
@@ -55,7 +55,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ token, user, login, logout, signup }}>
+    <AuthContext.Provider
+      value={{ decodedToken, token, user, login, logout, signup }}
+    >
       {children}
     </AuthContext.Provider>
   );

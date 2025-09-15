@@ -11,7 +11,9 @@ const updateProductFetch = (type, id, token, userId, quantity) => {
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(body),
-  });
+  })
+    .then((res) => res.json())
+    .then((res) => console.log("res => ", res));
 };
 
 export default updateProductFetch;

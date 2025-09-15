@@ -2,19 +2,41 @@ import Avatar from "./Avatar";
 import Videoskin from "../assets/Clear Skin Journey Quiz-VEED.mp4";
 import { useContext, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext.jsx";
+import { useDispatch } from "react-redux";
+import { jwtDecode } from "jwt-decode";
+import { addToCart } from "../rtk/slices/items-slice.js";
+import updateProductFetch from "../utils/updateProductFetch.js";
 
 const HeroComponent = () => {
-
-
+  const dispatch = useDispatch();
   const { login } = useContext(AuthContext);
-  
+
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const token = params.get("token");
 
     if (token) {
       const fetchLogin = async () => {
-        await login({ token }); 
+        await login({ token });
+        const decodedToken = jwtDecode(token);
+        const guestCart = JSON.parse(localStorage.getItem("cart"));
+        console.log("guesst cart: ", guestCart);
+        if (guestCart) {
+          guestCart.forEach((item) => {
+            console.log("item => ", item);
+            dispatch(
+              addToCart({ id: item.productID, quantity: item.quantity })
+            );
+            updateProductFetch(
+              "addProduct",
+              item.productID,
+              token,
+              decodedToken.userId,
+              item.quantity
+            );
+          });
+          localStorage.removeItem("cart");
+        }
       };
       fetchLogin();
     }
@@ -22,13 +44,12 @@ const HeroComponent = () => {
 
   return (
     <div>
-       <div className=" bg-gray-50">
+      <div className=" bg-gray-50">
         <section className="pt-12 bg-gray-50 sm:pt-16">
           <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
             <section className="relative py-12 overflow-hidden sm:pb-16 lg:pb-20 xl:pb-24">
               <div className="px-4 mx-auto relative sm:px-6 lg:px-8 max-w-7xl">
-     <div className="grid grid-cols-1 lg:grid-cols-2 gap-y-12 lg:gap-x-24 items-center">
-
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-y-12 lg:gap-x-24 items-center">
                   <div>
                     <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
                       Tired of Guessing Your
@@ -90,8 +111,6 @@ const HeroComponent = () => {
           </div>
         </section>
       </div>
-
-
     </div>
   );
 };
