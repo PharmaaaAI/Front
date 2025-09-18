@@ -14,7 +14,6 @@ const HeroSection = () => {
       <ValuePreposition />
       <HowItWorks />
       <SocialProof />
-      <ProductsCards />
       <PricingSection1 />
       <FAQ />
     </div>
